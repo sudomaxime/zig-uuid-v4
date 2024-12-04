@@ -31,7 +31,7 @@ pub const UUID = struct {
         return uuid;
     }
 
-    fn hexCharToValue(c: u8) ?u8 {
+    fn hex_char_to_val(c: u8) ?u8 {
         if (c >= '0' and c <= '9') {
             return c - '0';
         } else if (c >= 'a' and c <= 'f') {
@@ -86,8 +86,8 @@ pub const UUID = struct {
             }
             if (i + 1 >= s.len)
                 return error.InvalidFormat; // Not enough characters for a full byte
-            const hi = hexCharToValue(s[i]) orelse return error.InvalidCharacter;
-            const lo = hexCharToValue(s[i + 1]) orelse return error.InvalidCharacter;
+            const hi = hex_char_to_val(s[i]) orelse return error.InvalidCharacter;
+            const lo = hex_char_to_val(s[i + 1]) orelse return error.InvalidCharacter;
             bytes[byte_index] = ((hi << 4) | lo);
             byte_index += 1;
             i += 2;
