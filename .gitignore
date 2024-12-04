@@ -1,0 +1,8 @@
+# Zig build directories
+.zig-cache
+.zig-out
+
+# Temporary editor or OS files
+*.swp
+*.swo
+.DS_Store
