@@ -19,12 +19,13 @@ pub const UUID = struct {
 
     /// Generates a new Version 4 UUID.
     pub fn init() !UUID {
-        var uuid = UUID{ .bytes = undefined };
-        std.crypto.random.bytes(&uuid.bytes);
+        var uuid = UUID{
+            .bytes = undefined,
+        };
 
+        std.crypto.random.bytes(&uuid.bytes);
         // Set version to 4
         uuid.bytes[6] = (uuid.bytes[6] & 0x0F) | 0x40;
-
         // Set variant to RFC 4122
         uuid.bytes[8] = (uuid.bytes[8] & 0x3F) | 0x80;
 
@@ -65,27 +66,36 @@ pub const UUID = struct {
 
     /// Parses a UUID string into a UUID struct.
     pub fn parse(s: []const u8) !UUID {
-        if (s.len != 36)
+        if (s.len != 36) {
             return error.InvalidLength;
+        }
 
         const hyphen_positions = [_]usize{ 8, 13, 18, 23 };
+
         for (hyphen_positions) |pos| {
-            if (s[pos] != '-')
+            if (s[pos] != '-') {
                 return error.InvalidFormat;
+            }
         }
 
         var bytes: [16]u8 = undefined;
         var byte_index: usize = 0;
         var i: usize = 0;
+
         while (byte_index < 16) {
-            if (i >= s.len)
+            if (i >= s.len) {
                 return error.InvalidFormat; // Reached end of string unexpectedly
+            }
+
             if (s[i] == '-') {
                 i += 1;
                 continue;
             }
-            if (i + 1 >= s.len)
-                return error.InvalidFormat; // Not enough characters for a full byte
+
+            if (i + 1 >= s.len) {
+                return error.InvalidFormat; // Not enough characters for a full bytes
+            }
+
             const hi = hex_char_to_val(s[i]) orelse return error.InvalidCharacter;
             const lo = hex_char_to_val(s[i + 1]) orelse return error.InvalidCharacter;
             bytes[byte_index] = ((hi << 4) | lo);
@@ -93,7 +103,9 @@ pub const UUID = struct {
             i += 2;
         }
 
-        return UUID{ .bytes = bytes };
+        return UUID{
+            .bytes = bytes,
+        };
     }
 
     /// Implements the fmt.Format interface for printing.
@@ -117,7 +129,9 @@ pub const UUID = struct {
     }
 
     /// Zero UUID constant.
-    pub const zero: UUID = UUID{ .bytes = .{0} ** 16 };
+    pub const zero: UUID = UUID{
+        .bytes = .{0} ** 16,
+    };
 };
 
 test "Parsing valid UUID strings" {
